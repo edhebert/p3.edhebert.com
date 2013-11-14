@@ -1,0 +1,17 @@
+body {
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+    background-color: #69d2e7;
+    overflow: hidden;
+    font-size: 62.5%;
+    font-family: sans-serif, "Arial";
+}
+
+
+canvas {
+    margin: 0px;
+    padding: 0px;
+    /* pointer-events: none; */
+    position: absolute;
+}
