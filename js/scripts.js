@@ -7,14 +7,12 @@ DWA15 - Project 3 - Javascript
 This project uses the Paper.js library to create a natural organic object.
 It will wander on its own, respond to mouse events, etc.
 
-The concepts for this project are adapted from Chapter 6 of the book 
-"The Nature of Code", By Dan Shiffman. It discusses the creation of "autonomous 
-agents" with 
+The concepts for this project are adapted from Chapter 6, "Autonomous Agents" from
+ the book _The Nature of Code_, By Dan Shiffman. 
 
 Shiffman's book details natural simulation algorithms implemented in Processing / Java.
 
-His concepts for organic movement have been ported to Javascript / Paper.js, 
-and adapted to my own object.
+These organic movement techniques have been ported to Javascript / Paper.js here.
 
 http://natureofcode.com
 http://paperjs.org
@@ -24,11 +22,12 @@ http://paperjs.org
 
 // the global creature, called "vehicle"
 var vehicle;
-// Access paper.js directly through JavaScript
+
+// Access paper.js directly through JavaScript rather than PaperScript
 paper.install(window);
 
 
-window.onload = function() {
+$(document).ready(function() {
     paper.setup("myCanvas");
     
     // Create a vehicle object
@@ -52,7 +51,7 @@ window.onload = function() {
     tool.onMouseMove = function(event) {
         mousePosition = new Point(event.point);    
     }
-};
+});
 
 
 /* Begin Vehicle Class */
@@ -68,10 +67,9 @@ function Vehicle() {
 
     // the maximum desired speed of the vehicle   
     var maxSpeed        = 10; // Math.random() * 0.2 + 1;
-    console.log(maxSpeed);
 
     // the magnitude of its steering ability
-    var maxForce        = .8;
+    var maxForce        = .1;
     
     // established the heading / direction of the vehicle
     var angle           = (Math.PI * 2);
@@ -131,9 +129,9 @@ function Vehicle() {
         desired = desired.normalize();
 
         // teach the vehicle to slow down to arrive at object
-        if (distance < 300) 
-            // slow down
-            desired = desired.multiply(maxSpeed * (distance / 300));
+        if (distance < 500) 
+            // set speed based on the proximity to the mouse
+            desired = desired.multiply(maxSpeed * (distance / 200));
         else
             // pursue at full speed
             desired = desired.multiply(maxSpeed);
@@ -145,36 +143,39 @@ function Vehicle() {
         steer.length = Math.min( maxForce, steer.length );
 
         // apply steering force to our acceleration
-        this.applyForce(steer);
+            this.applyForce(steer);
     }
 
     
     this.update = function() {
+        // clone the active location to last location
         lastLocation = this.location.clone();
         
-        // velocity = velocity + acceleration
+        // add acceleration forces to velocity
         this.velocity = this.velocity.add(this.acceleration);
 
         // regulate the velocity to the max speed
         this.velocity.length = Math.min(maxSpeed, this.velocity.length);
         
-        // location = location + velocity
+        // apply velocity to the location
         this.location = this.location.add(this.velocity);
         
         // reset acceleration
         this.acceleration.length = 0;
         
-        // Change vehicle path position, without this it won't move
+        // Change vehicle path position (without this it won't move)
         this.path.position = this.location.clone();
         
         // Align rotation to match direction of velocity vector
         var theta = new Point(this.location.subtract(lastLocation));
+
+        // orient the vector perpendicular to the mouse
         orientation = theta.angle + 90;
+
         this.path.rotate(orientation - lastOrientation);
         lastOrientation = orientation;
     };   
 }
 
 /* End Vehicle Class */
-
 
