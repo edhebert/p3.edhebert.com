@@ -5,15 +5,16 @@ ehebert@fas.harvard.edu
 DWA15 - Project 3 - Javascript
 
 This project uses the Paper.js library to create a natural organic object.
-It will wander randomly, respond to the environment, etc.
+It will wander on its own, respond to mouse events, etc.
 
 The concepts for this project are adapted from Chapter 6 of the book 
 "The Nature of Code", By Dan Shiffman. It discusses the creation of "autonomous 
 agents" with 
 
-His book details algorithms and code in the Processing language.
+Shiffman's book details natural simulation algorithms implemented in Processing / Java.
+
 His concepts for organic movement have been ported to Javascript / Paper.js, 
-and applied to my own object.
+and adapted to my own object.
 
 http://natureofcode.com
 http://paperjs.org
@@ -122,8 +123,20 @@ function Vehicle() {
     this.seek = function(target) {
         // scale desired speed according to max speed
         var desired = new Point(target.subtract(this.location));
+
+        // get the distance between the vehicle and mouse
+        var distance = desired.length;
+
+        // normalize 'desired' path vector to 1
         desired = desired.normalize();
-        desired = desired.multiply(maxSpeed);
+
+        // teach the vehicle to slow down to arrive at object
+        if (distance < 300) 
+            // slow down
+            desired = desired.multiply(maxSpeed * (distance / 300));
+        else
+            // pursue at full speed
+            desired = desired.multiply(maxSpeed);
 
         // create a steering Force
         var steer = new Point(desired.subtract(this.velocity));
