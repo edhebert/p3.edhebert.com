@@ -4,15 +4,11 @@ Ed Hebert
 ehebert@fas.harvard.edu
 DWA15 - Project 3 - Javascript
 
-This project uses the Paper.js library to create a natural organic object.
-It will wander on its own, respond to mouse events, etc.
+This project uses the Paper.js library to create a fish that
+steers naturally, responds to mouse events, etc.
 
 The concepts for this project are adapted from Chapter 6, "Autonomous Agents" from
  the book _The Nature of Code_, By Dan Shiffman. 
-
-Shiffman's book details natural simulation algorithms implemented in Processing / Java.
-
-These organic movement techniques have been ported to Javascript / Paper.js here.
 
 http://natureofcode.com
 http://paperjs.org
@@ -20,8 +16,11 @@ http://paperjs.org
 */
 
 
-// the global creature, called "vehicle"
-var vehicle;
+// the global fish creature
+var fish;
+
+// an array to contain food particles
+var food = [];
 
 // Access paper.js directly through JavaScript rather than PaperScript
 paper.install(window);
@@ -30,9 +29,9 @@ paper.install(window);
 $(document).ready(function() {
     paper.setup("myCanvas");
     
-    // Create a vehicle object
-    vehicle = new Vehicle();
-    vehicle.init();
+    // Create a fish object
+    fish = new Fish();
+    fish.init();
 
     // initialize the mouse tool in Paper.js
     tool = new Tool();
@@ -42,36 +41,53 @@ $(document).ready(function() {
 
     // Set drawing loop
     view.onFrame = function(event) {
-        vehicle.update();
-        vehicle.checkBoundaries();
-        vehicle.seek(mousePosition);         
+        fish.update();
+        fish.checkBoundaries();
+        fish.seek(mousePosition);         
     }
 
-    // Define a mousedown and mousedrag handler
+/*
+    // creture follows mouse movements
     tool.onMouseMove = function(event) {
         mousePosition = new Point(event.point);    
     }
+*/
+
+    // Feed fish with a mouse click
+    tool.onMouseDown = function(event) {
+        // add a new food particle to the array
+        var newFood = new Food(event.point);
+
+        // (temp) set mousePosition to the click location
+        mousePosition = event.point;
+
+        // add the food particle to the array (eventually need to locate closest food)
+        food.push(newFood);  
+
+        console.log(food); 
+    }
+
 });
 
 
-/* Begin Vehicle Class */
+/* Begin Fish Class */
 
-function Vehicle() {
-    // the path that draws the vehicle
+function Fish() {
+    // the path that draws the fish
     this.path           = new Path();
 
-    // the vectors that will govern the vehicle's motion (load from off screen)
+    // the vectors that will govern the fish's motion (load from off screen)
     this.location       = new Point(-100 , Math.random() * (view.size.height * 0.5));
     this.velocity       = new Point(0, 0);
     this.acceleration   = new Point(0, 1);
 
-    // the maximum desired speed of the vehicle   
+    // the maximum desired speed of the fish   
     var maxSpeed        = 10; // Math.random() * 0.2 + 1;
 
     // the magnitude of its steering ability
     var maxForce        = .1;
     
-    // established the heading / direction of the vehicle
+    // established the heading / direction of the fish
     var angle           = (Math.PI * 2);
     var wrapAngle       = (Math.PI / 2) + angle;
     var wanderTheta     = 0;
@@ -82,7 +98,7 @@ function Vehicle() {
         
     
     this.init = function() {
-        // construct the vehicle shape
+        // construct the fish shape
         this.path.strokeColor = 'black';
         this.path.add(new Point(0, 90));
         this.path.add(new Point(40, 0));
@@ -92,13 +108,13 @@ function Vehicle() {
     };
 
 
-    // function to apply various force vectors to vehicle acceleration
+    // function to apply various force vectors to fish acceleration
     this.applyForce = function(force) {
         this.acceleration = this.acceleration.add(force);
     }
  
 
-     // wraps the vehicle object to the opposite side of the screen    
+     // wraps the fish object to the opposite side of the screen    
     this.checkBoundaries = function() {
 
         // create offset of 'white space' beyond the window
@@ -122,13 +138,13 @@ function Vehicle() {
         // scale desired speed according to max speed
         var desired = new Point(target.subtract(this.location));
 
-        // get the distance between the vehicle and mouse
+        // get the distance between the fish and mouse
         var distance = desired.length;
 
         // normalize 'desired' path vector to 1
         desired = desired.normalize();
 
-        // teach the vehicle to slow down to arrive at object
+        // teach the fish to slow down to arrive at object
         if (distance < 500) 
             // set speed based on the proximity to the mouse
             desired = desired.multiply(maxSpeed * (distance / 200));
@@ -163,7 +179,7 @@ function Vehicle() {
         // reset acceleration
         this.acceleration.length = 0;
         
-        // Change vehicle path position (without this it won't move)
+        // Change fish path position (without this it won't move)
         this.path.position = this.location.clone();
         
         // Align rotation to match direction of velocity vector
@@ -177,5 +193,16 @@ function Vehicle() {
     };   
 }
 
-/* End Vehicle Class */
+/* End Fish Class */
 
+
+/* Begin Food Class */
+
+function Food(point) {
+
+    // the path that draws the food
+    this.path           = new Path.Circle(point, 10);
+    this.path.fillColor = 'black';
+}
+
+/* End Food Class */
