@@ -20,7 +20,7 @@ http://paperjs.org
 var fish;
 
 // an array to contain food particles
-var food = [];
+var food;
 
 // Access paper.js directly through JavaScript rather than PaperScript
 paper.install(window);
@@ -37,34 +37,34 @@ $(document).ready(function() {
     tool = new Tool();
 
     // initialize mouse Position
-    var mousePosition = new Point (-100, -100);
+    var foodPosition = new Point (-100, -100);
 
     // Set drawing loop
     view.onFrame = function(event) {
         fish.update();
         fish.checkBoundaries();
-        fish.seek(mousePosition);         
+        fish.seek(foodPosition); 
+        fish.eat();        
     }
 
 /*
-    // creture follows mouse movements
+    // creature follows mouse movements
     tool.onMouseMove = function(event) {
-        mousePosition = new Point(event.point);    
+        foodPosition = new Point(event.point);    
     }
 */
 
     // Feed fish with a mouse click
     tool.onMouseDown = function(event) {
         // add a new food particle to the array
-        var newFood = new Food(event.point);
+        food = new Food(event.point);
 
-        // (temp) set mousePosition to the click location
-        mousePosition = event.point;
+        // (temp) set foodPosition to the click location
+        foodPosition = event.point;
 
         // add the food particle to the array (eventually need to locate closest food)
-        food.push(newFood);  
+        //food.push(newFood);  
 
-        console.log(food); 
     }
 
 });
@@ -75,6 +75,9 @@ $(document).ready(function() {
 function Fish() {
     // the path that draws the fish
     this.path           = new Path();
+
+    // the fish's 'mouth
+    var mouth;
 
     // the vectors that will govern the fish's motion (load from off screen)
     this.location       = new Point(-100 , Math.random() * (view.size.height * 0.5));
@@ -97,18 +100,7 @@ function Fish() {
     var lastLocation;
         
     
-    this.init = function() {
-        // construct the fish shape
-        this.path.strokeColor = 'black';
-        this.path.add(new Point(0, 90));
-        this.path.add(new Point(40, 0));
-        this.path.add(new Point(80, 90));
-
-        this.path.closed = true;        
-    };
-
-
-    // function to apply various force vectors to fish acceleration
+    // apply various force vectors to fish acceleration
     this.applyForce = function(force) {
         this.acceleration = this.acceleration.add(force);
     }
@@ -131,6 +123,30 @@ function Fish() {
         if (this.location.y > view.size.height + offset) {
             this.location.y = -offset;
         }
+    }
+
+
+    this.eat = function() {
+
+        if (typeof food != "undefined")
+            var hitResult = project.hitTest(mouth);
+            
+        console.log('mouth: ' + mouth +', ' + 'hitResult: ' + hitResult);
+
+        // if fish mouth hits food, do stuff
+        if (hitResult)
+            console.log('Yum!');
+    }
+
+
+    this.init = function() {
+        // construct the fish shape
+        this.path.strokeColor = 'black';
+        this.path.add(new Point(0, 90));
+        mouth = this.path.add(new Point(40, 0));
+        this.path.add(new Point(80, 90));
+
+        this.path.closed = true;        
     }
 
 
