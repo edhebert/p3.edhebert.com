@@ -7,11 +7,13 @@ DWA15 - Project 3 - Javascript
 This project uses the Paper.js library to create a fish that
 steers naturally, responds to mouse events, etc.
 
-The concepts for this project are adapted from Chapter 6, "Autonomous Agents" from
- the book _The Nature of Code_, By Dan Shiffman. 
+The concepts for this project are adapted from Chapter 6, "Autonomous Agents" from the book _The Nature of Code_, By Dan Shiffman. 
+
+Also thanks to topics and sketches posted on OpenProcessing.org
 
 http://natureofcode.com
 http://paperjs.org
+http://openprocessing.org
 
 */
 
@@ -56,6 +58,11 @@ $(document).ready(function() {
 
     // Feed fish with a mouse click
     tool.onMouseDown = function(event) {
+
+        // remove the old food (for now)
+        if (typeof food != 'undefined')
+            food.path.remove();
+
         // add a new food particle to the array
         food = new Food(event.point);
 
@@ -63,7 +70,7 @@ $(document).ready(function() {
         foodPosition = event.point;
 
         // add the food particle to the array (eventually need to locate closest food)
-        //food.push(newFood);  
+        // food.push(newFood);  
 
     }
 
@@ -76,19 +83,27 @@ function Fish() {
     // the path that draws the fish
     this.path           = new Path();
 
-    // the fish's 'mouth
+    // fish head
+    this.head   = new Segment();
+    
+    // the fish's mouth
     var mouth;
 
+    // the number and length of fish body 'spine' segments
+    var segmentLength = 5;
+    var numSegments = 20;
+
     // the vectors that will govern the fish's motion (load from off screen)
-    this.location       = new Point(-100 , Math.random() * (view.size.height * 0.5));
+    // this.location       = new Point(-100 , Math.random() * (view.size.height * 0.5));
+    this.location       = new Point(view.center);
     this.velocity       = new Point(0, 0);
-    this.acceleration   = new Point(0, 1);
+    this.acceleration   = new Point(0, 0);
 
     // the maximum desired speed of the fish   
-    var maxSpeed        = 10; // Math.random() * 0.2 + 1;
+    var maxSpeed        = 5; // Math.random() * 0.2 + 1;
 
     // the magnitude of its steering ability
-    var maxForce        = .1;
+    var maxForce        = .03;
     
     // established the heading / direction of the fish
     var angle           = (Math.PI * 2);
@@ -127,11 +142,11 @@ function Fish() {
 
 
     this.eat = function() {
-
+        // if food exists, compare its location against location of mouth's point
         if (typeof food != "undefined")
-            var hitResult = project.hitTest(mouth);
+            var hitResult = food.path.hitTest(mouth);
             
-        console.log('mouth: ' + mouth +', ' + 'hitResult: ' + hitResult);
+        // console.log('mouth: ' + mouth +', ' + 'hitResult: ' + hitResult);
 
         // if fish mouth hits food, do stuff
         if (hitResult)
@@ -141,12 +156,14 @@ function Fish() {
 
     this.init = function() {
         // construct the fish shape
-        this.path.strokeColor = 'black';
         this.path.add(new Point(0, 90));
-        mouth = this.path.add(new Point(40, 0));
-        this.path.add(new Point(80, 90));
+        mouth = this.path.add(new Point(30, 0));
+        this.path.add(new Point(60, 90));
 
-        this.path.closed = true;        
+        this.path.closed = true; 
+        this.path.fillColor = 'black';   
+
+         
     }
 
 
@@ -154,7 +171,7 @@ function Fish() {
         // scale desired speed according to max speed
         var desired = new Point(target.subtract(this.location));
 
-        // get the distance between the fish and mouse
+        // get the distance between the fish and target
         var distance = desired.length;
 
         // normalize 'desired' path vector to 1
@@ -162,7 +179,7 @@ function Fish() {
 
         // teach the fish to slow down to arrive at object
         if (distance < 500) 
-            // set speed based on the proximity to the mouse
+            // set speed based on the proximity to the target
             desired = desired.multiply(maxSpeed * (distance / 200));
         else
             // pursue at full speed
@@ -201,12 +218,15 @@ function Fish() {
         // Align rotation to match direction of velocity vector
         var theta = new Point(this.location.subtract(lastLocation));
 
-        // orient the vector perpendicular to the mouse
+        // orient the vector perpendicular to the mouse (90°)
         orientation = theta.angle + 90;
 
+        //reset the orientation
         this.path.rotate(orientation - lastOrientation);
         lastOrientation = orientation;
-    };   
+    };  
+
+
 }
 
 /* End Fish Class */
