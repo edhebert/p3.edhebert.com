@@ -34,6 +34,9 @@ var fish;
 // (eventually an) array to contain food particles
 var food;
 
+// bool to track whether there's food on the screen
+var foodExists = false;
+
 // Access paper.js directly through JavaScript rather than PaperScript
 paper.install(window);
 
@@ -57,12 +60,15 @@ $(document).ready(function() {
         fish.checkBoundaries();
 
         // if there's food, eat it. Otherwise, wander about.         
-        if (typeof(food) != "undefined"){
-            fish.seek(foodPosition);
-            fish.eat();
-        }
-        else
-            fish.wander();        
+        if (typeof(food) != "undefined")
+            console.log(foodExists);
+            if (foodExists)
+            {
+                fish.seek(foodPosition);
+                fish.eat();
+            }
+            else
+                fish.wander();     
     }
 
 /*
@@ -79,15 +85,15 @@ $(document).ready(function() {
         if (typeof food != 'undefined')
             food.path.remove();
 
-        // add a new food particle to the array
-        food = new Food(event.point);
-
         // (temp) set foodPosition to the click location
         foodPosition = event.point;
 
+        // add a new food particle to the array
+        food = new Food(event.point);  
+        foodExists = true;
+
         // add the food particle to the array (eventually need to locate closest food)
         // food.push(newFood);  
-
     }
 
 });
@@ -98,7 +104,7 @@ $(document).ready(function() {
 function Fish() {
     // the path that draws the fish
     this.path           = new Path();
-    this.head   = new Segment();
+    this.head           = new Segment();
     var mouth;
 
     // the number and length of fish body 'spine' segments
@@ -106,19 +112,19 @@ function Fish() {
     var numSegments = 20;
 
     // the vectors that will govern the fish's motion (load from off screen)
-    // this.location       = new Point(-100 , Math.random() * (view.size.height * 0.5));
     this.location       = new Point(view.center);
     this.velocity       = new Point(0, 0);
     this.acceleration   = new Point(0, 0);
 
     // the maximum desired speed of the fish   
-    var maxSpeed        = 10; // Math.random() * 0.2 + 1;
+    var maxSpeed        = 10; 
 
     // the magnitude of its steering ability
     var maxForce        = .2;
     
     // established the heading / direction of the fish
     var angle           = (Math.PI * 2);
+
     // how much the fish will wander about
     var wanderTheta     = 0;
     
@@ -171,13 +177,15 @@ function Fish() {
 
 
     this.eat = function() {
-        // detect food location against location of mouth's point
-        var hitResult = food.path.hitTest(mouth);
-        console.log('mouth: ' + mouth +', ' + 'hitResult: ' + hitResult);
+        // detect food location against location of mouth's point        
+        var hitResult = food.path.hitTest(mouth.point);
 
-        // if fish mouth hits food, do stuff
+        // if fish mouth hits food, remove food
         if (hitResult)
-            console.log('Yum!');
+        {
+            food.path.remove();
+            foodExists = false;
+        }
     }
 
 
@@ -227,7 +235,7 @@ function Fish() {
         steer.length = Math.min( maxForce, steer.length );
 
         // apply steering force to our acceleration
-            this.applyForce(steer);
+        this.applyForce(steer);
     }
 
     
@@ -269,17 +277,16 @@ function Fish() {
         }
     };  
 
-
+    // draws a "wandering" circle and target some distance ahead of the fish
     this.wander = function() {
-        // draws a "wandering" target circle some distance ahead of the fish
-
+        
         // radius of wander circle
         var wanderR     = 5;
 
         // distance of circle ahead of the fish
         var wanderD     = 125;
 
-        // how much to randomize the target angle each loop
+        // how much to randomize the target each loop
         var change      = .25;       
         wanderTheta += Math.random() * (change * 2) - change;
         
@@ -307,7 +314,6 @@ function Fish() {
 /* Begin Food Class */
 
 function Food(point) {
-
     // the path that draws the food
     this.path           = new Path.Circle(point, 10);
     this.path.fillColor = 'green';
@@ -344,7 +350,7 @@ function Tail() {
     
     
     // Use simple IK motion
-    this.update = function( orientation ) {
+    this.update = function(orientation) {
         this.path.segments[1].point = this.head.point;
         
         var dx      = this.head.point.x - this.path.segments[1].point.x;
@@ -366,6 +372,8 @@ function Tail() {
         
         pathTip.position.x = this.path.segments[numSegments-1].point.x;
         pathTip.position.y = this.path.segments[numSegments-1].point.y;
+
+        this.path.smooth();
     };
     
 }
