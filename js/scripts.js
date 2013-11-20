@@ -272,24 +272,32 @@ function Fish() {
 
     this.wander = function() {
         // draws a "wandering" target circle some distance ahead of the fish
-        var wanderR     = 40;
-        var wanderD     = 100;
-        var change      = 0.05;
-        
+
+        // radius of wander circle
+        var wanderR     = 5;
+
+        // distance of circle ahead of the fish
+        var wanderD     = 125;
+
+        // how much to randomize the target angle each loop
+        var change      = .25;       
         wanderTheta += Math.random() * (change * 2) - change;
         
+        // get the current velocity
         var circleLocation = this.velocity.clone();
+        // normalize it (to get heading)
         circleLocation = circleLocation.normalize();
-        circleLocation.x *= wanderD;
-        circleLocation.y *= wanderD;
-        circleLocation.x += this.location.x;
-        circleLocation.y += this.location.y;
+        // multiply it by the circle's distance
+        circleLocation = circleLocation.multiply(wanderD);
+        // make the circle relative to the fish's current location
+        circleLocation = circleLocation.add(this.location);
+
         
-        var circleOffset = new Point( wanderR * Math.cos( wanderTheta ), wanderR * Math.sin( wanderTheta ) );
+        var circleOffset = new Point(wanderR * Math.cos( wanderTheta ), wanderR * Math.sin( wanderTheta));
         
-        var target = new Point( circleLocation.x + circleOffset.x, circleLocation.y + circleOffset.y );
+        var target = new Point(circleLocation.x + circleOffset.x, circleLocation.y + circleOffset.y);
         
-        this.seek( target );
+        this.seek(target);
     }
 }
 
