@@ -120,9 +120,9 @@ function Fish() {
     var lastOrientation = 0;
     var lastLocation;
         
-    // number of streaming Tentacles
-    var numTentacles = 2;
-    var tentacles       = [numTentacles];
+    // number of streaming Tails
+    var numTails = 2;
+    var tails       = [numTails];
     
     // apply various force vectors to fish acceleration
     this.applyForce = function(force) {
@@ -138,27 +138,27 @@ function Fish() {
 
         if (this.location.x < -offset) {
             this.location.x = view.size.width + offset;
-            // redraw tentacles
-            for ( var t = 0; t < numTentacles; t++ ) {
-                tentacles[t].path.position = this.location.clone();
+            // redraw tails
+            for ( var t = 0; t < numTails; t++ ) {
+                tails[t].path.position = this.location.clone();
             }
         }
         if (this.location.x > view.size.width + offset) {
             this.location.x = -offset;
-            for ( var t = 0; t < numTentacles; t++ ) {
-                tentacles[t].path.position = this.location.clone();
+            for ( var t = 0; t < numTails; t++ ) {
+                tails[t].path.position = this.location.clone();
             }
         }
         if (this.location.y < -offset) {
             this.location.y = view.size.height + offset;
-            for ( var t = 0; t < numTentacles; t++ ) {
-                tentacles[t].path.position = this.location.clone();
+            for ( var t = 0; t < numTails; t++ ) {
+                tails[t].path.position = this.location.clone();
             }
         }
         if (this.location.y > view.size.height + offset) {
             this.location.y = -offset;
-            for ( var t = 0; t < numTentacles; t++ ) {
-                tentacles[t].path.position = this.location.clone();
+            for ( var t = 0; t < numTails; t++ ) {
+                tails[t].path.position = this.location.clone();
             }
         }
     }
@@ -187,10 +187,10 @@ function Fish() {
         this.path.strokeWidth = 2;
         this.path.strokeColor =  '#0033FF'; 
 
-        // Create tentacles
-        for ( var t = 0; t < numTentacles; t++ ) {
-            tentacles[t] = new Tentacle();
-            tentacles[t].init();
+        // Create tails
+        for ( var t = 0; t < numTails; t++ ) {
+            tails[t] = new Tentacle();
+            tails[t].init();
         }
 
          
@@ -255,12 +255,12 @@ function Fish() {
         this.path.rotate(orientation - lastOrientation);
         lastOrientation = orientation;
 
-        // Attach tentacles 
-        for ( var t = 0; t < numTentacles; t++ ) {
-            // get the tentacles heading in the same direction as the head
-            tentacles[t].update(orientation);
+        // Attach tails 
+        for ( var t = 0; t < numTails; t++ ) {
+            // get the tails heading in the same direction as the head
+            tails[t].update(orientation);
             // point 0 is 'mouth', no tentacle there [t+1]
-            tentacles[t].head.point = this.path.segments[t+1].point;
+            tails[t].head.point = this.path.segments[t+1].point;
         }
     };  
 
