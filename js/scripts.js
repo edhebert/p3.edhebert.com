@@ -18,12 +18,12 @@ http://openprocessing.org
 */
 
 
-var tentacleStyle = {
+var tailStyle = {
     strokeColor:    "#0033FF",
     strokeWidth:    2
 };
 
-var tentacleTipStyle = {
+var tailTipStyle = {
     fillColor:  "#CA2A65"
 };
 
@@ -264,7 +264,7 @@ function Fish() {
         for ( var t = 0; t < numTails; t++ ) {
             // get the tails heading in the same direction as the head
             tails[t].update(orientation);
-            // point 0 is 'mouth', no tentacle there [t+1]
+            // point 0 is 'mouth', no tail there [t+1]
             tails[t].head.point = this.path.segments[t+1].point;
         }
     };  
@@ -329,7 +329,7 @@ function Tail() {
     var segmentLength       = 20;
     
     var pathTip             = new Path.Circle( new Point(0, 0), 5 );
-    pathTip.style           = tentacleTipStyle;
+    pathTip.style           = tailTipStyle;
     //pathTip.opacity       = 0.7;
         
     
@@ -337,7 +337,7 @@ function Tail() {
         for ( var i = 0; i < numSegments; i++ ) {
             this.path.add( new Point( 0, i * segmentLength ) );
         }
-        this.path.style     = tentacleStyle;
+        this.path.style     = tailStyle;
         this.head           = this.path.segments[0];
     };
     //this.path.opacity = 0.8;
