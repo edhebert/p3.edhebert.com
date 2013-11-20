@@ -173,7 +173,7 @@ function Fish() {
     this.eat = function() {
         // detect food location against location of mouth's point
         var hitResult = food.path.hitTest(mouth);
-        // console.log('mouth: ' + mouth +', ' + 'hitResult: ' + hitResult);
+        console.log('mouth: ' + mouth +', ' + 'hitResult: ' + hitResult);
 
         // if fish mouth hits food, do stuff
         if (hitResult)
@@ -311,6 +311,7 @@ function Food(point) {
     // the path that draws the food
     this.path           = new Path.Circle(point, 10);
     this.path.fillColor = 'green';
+    this.path.strokeColor = 'green';
     this.path.sendToBack();
 }
 
