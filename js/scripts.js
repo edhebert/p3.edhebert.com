@@ -189,7 +189,7 @@ function Fish() {
 
         // Create tails
         for ( var t = 0; t < numTails; t++ ) {
-            tails[t] = new Tentacle();
+            tails[t] = new Tail();
             tails[t].init();
         }
 
@@ -284,9 +284,9 @@ function Food(point) {
 
 
 // -------------------------------------
-// ---- Tentacle Class BEGIN
+// ---- Tail Class BEGIN
 
-function Tentacle() {
+function Tail() {
     this.head   = new Segment();
     
     this.path               = new Path();
@@ -335,5 +335,5 @@ function Tentacle() {
     
 }
 
-// ---- Tentacle Class END
+// ---- Tail Class END
 // -------------------------------------
