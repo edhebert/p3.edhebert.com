@@ -17,21 +17,22 @@ http://openprocessing.org
 
 */
 
-
-var tentacleStyle = {
-    strokeColor:    "#0033FF",
+var fishStyle = {
+    strokeColor:    "#CA2A65",
     strokeWidth:    2
 };
 
-var tentacleTipStyle = {
+var fishHeadStyle = {
     fillColor:  "#CA2A65"
 };
+
+
 
 
 // the global fish creature
 var fish;
 
-// (eventually an) array to contain food particles
+// an array to contain food particles
 var food;
 
 // Access paper.js directly through JavaScript rather than PaperScript
@@ -49,7 +50,7 @@ $(document).ready(function() {
     tool = new Tool();
 
     // initialize mouse Position
-    var foodPosition = new Point (-300, -300);
+    var foodPosition = new Point (-100, -100);
 
     // Set drawing loop
     view.onFrame = function(event) {
@@ -92,7 +93,14 @@ $(document).ready(function() {
 function Fish() {
     // the path that draws the fish
     this.path           = new Path();
+        
+    var pathTip             = new Path.Circle( new Point(0, 0), 10 );
+    pathTip.style           = fishHeadStyle;
+
+    // fish head
     this.head   = new Segment();
+    
+    // the fish's mouth
     var mouth;
 
     // the number and length of fish body 'spine' segments
@@ -106,23 +114,20 @@ function Fish() {
     this.acceleration   = new Point(0, 0);
 
     // the maximum desired speed of the fish   
-    var maxSpeed        = 10; // Math.random() * 0.2 + 1;
+    var maxSpeed        = 3; // Math.random() * 0.2 + 1;
 
     // the magnitude of its steering ability
-    var maxForce        = .2;
+    var maxForce        = .1;
     
     // established the heading / direction of the fish
     var angle           = (Math.PI * 2);
-    // var wrapAngle       = (Math.PI / 2) + angle;
-    // var wanderTheta     = 0;
+    var wrapAngle       = (Math.PI / 2) + angle;
+    var wanderTheta     = 0;
     
     var orientation     = 0;
     var lastOrientation = 0;
     var lastLocation;
         
-    // number of streaming Tentacles
-    var numTentacles = 2;
-    var tentacles       = [numTentacles];
     
     // apply various force vectors to fish acceleration
     this.applyForce = function(force) {
@@ -134,32 +139,18 @@ function Fish() {
     this.checkBoundaries = function() {
 
         // create offset of 'white space' beyond the window
-        var offset = 200;
-
+        var offset = 50;
         if (this.location.x < -offset) {
             this.location.x = view.size.width + offset;
-            // redraw tentacles
-            for ( var t = 0; t < numTentacles; t++ ) {
-                tentacles[t].path.position = this.location.clone();
-            }
         }
         if (this.location.x > view.size.width + offset) {
             this.location.x = -offset;
-            for ( var t = 0; t < numTentacles; t++ ) {
-                tentacles[t].path.position = this.location.clone();
-            }
         }
         if (this.location.y < -offset) {
             this.location.y = view.size.height + offset;
-            for ( var t = 0; t < numTentacles; t++ ) {
-                tentacles[t].path.position = this.location.clone();
-            }
         }
         if (this.location.y > view.size.height + offset) {
             this.location.y = -offset;
-            for ( var t = 0; t < numTentacles; t++ ) {
-                tentacles[t].path.position = this.location.clone();
-            }
         }
     }
 
@@ -168,7 +159,8 @@ function Fish() {
         // if food exists, compare its location against location of mouth's point
         if (typeof food != "undefined")
             var hitResult = food.path.hitTest(mouth);
-            // console.log('mouth: ' + mouth +', ' + 'hitResult: ' + hitResult);
+            
+        // console.log('mouth: ' + mouth +', ' + 'hitResult: ' + hitResult);
 
         // if fish mouth hits food, do stuff
         if (hitResult)
@@ -178,21 +170,21 @@ function Fish() {
 
     this.init = function() {
         // construct the fish shape
-        mouth = this.path.add(new Point(30,0));
-        this.path.add(new Point(0,90));        
-        this.path.add(new Point(60, 90));
+        // this.path.strokeColor = 'black';
+        // this.path.strokeWidth = 4;
+        // this.path.add(new Point(0, 90));
+        // mouth = this.path.add(new Point(40, 0));
+        // this.path.add(new Point(80, 90));
 
-        this.path.closed = true; 
-        this.path.fillColor = '#0033FF'; 
-        this.path.strokeWidth = 2;
-        this.path.strokeColor =  '#0033FF'; 
+        // this.path.closed = true; 
+        // this.path.fillColor = 'black';   
 
-        // Create tentacles
-        for ( var t = 0; t < numTentacles; t++ ) {
-            tentacles[t] = new Tentacle();
-            tentacles[t].init();
+        for ( var i = 0; i < numSegments; i++ ) {
+            this.path.add( new Point( 0, i * segmentLength ) );
         }
 
+        this.path.style     = fishStyle;
+        this.head           = this.path.segments[0];
          
     }
 
@@ -251,67 +243,8 @@ function Fish() {
         // orient the vector perpendicular to the mouse (90°)
         orientation = theta.angle + 90;
 
-        //reset the orientation
-        this.path.rotate(orientation - lastOrientation);
-        lastOrientation = orientation;
-
-        // Attach tentacles 
-        for ( var t = 0; t < numTentacles; t++ ) {
-            // get the tentacles heading in the same direction as the head
-            tentacles[t].update(orientation);
-            // point 0 is 'mouth', no tentacle there [t+1]
-            tentacles[t].head.point = this.path.segments[t+1].point;
-        }
-    };  
-
-
-}
-
-/* End Fish Class */
-
-
-/* Begin Food Class */
-
-function Food(point) {
-
-    // the path that draws the food
-    this.path           = new Path.Circle(point, 10);
-    this.path.fillColor = 'green';
-    this.path.sendToBack();
-}
-
-/* End Food Class */
-
-
-// -------------------------------------
-// ---- Tentacle Class BEGIN
-
-function Tentacle() {
-    this.head   = new Segment();
-    
-    this.path               = new Path();
-    var numSegments         = 20;
-    var segmentLength       = 20;
-    
-    var pathTip             = new Path.Circle( new Point(0, 0), 5 );
-    pathTip.style           = tentacleTipStyle;
-    //pathTip.opacity       = 0.7;
-        
-    
-    this.init = function() {
-        for ( var i = 0; i < numSegments; i++ ) {
-            this.path.add( new Point( 0, i * segmentLength ) );
-        }
-        this.path.style     = tentacleStyle;
-        this.head           = this.path.segments[0];
-    };
-    //this.path.opacity = 0.8;
-    
-    
-    // Use simple IK motion
-    this.update = function( orientation ) {
-        this.path.segments[1].point = this.head.point;
-        
+        // make the fish swim in this direction
+        this.path.segments[1].point = this.head.point;       
         var dx      = this.head.point.x - this.path.segments[1].point.x;
         var dy      = this.head.point.y - this.path.segments[1].point.y;
         var angle   = Math.atan2( dy, dx ) + (orientation * (Math.PI / 180));
@@ -329,11 +262,27 @@ function Tentacle() {
             }
         }
         
-        pathTip.position.x = this.path.segments[numSegments-1].point.x;
-        pathTip.position.y = this.path.segments[numSegments-1].point.y;
-    };
-    
+        pathTip.position.x = this.path.segments[0].point.x;
+        pathTip.position.y = this.path.segments[0].point.y;
+
+        //reset the orientation
+        this.path.rotate(orientation - lastOrientation);
+        lastOrientation = orientation;
+    };  
+
+
 }
 
-// ---- Tentacle Class END
-// -------------------------------------
+/* End Fish Class */
+
+
+/* Begin Food Class */
+
+function Food(point) {
+
+    // the path that draws the food
+    this.path           = new Path.Circle(point, 10);
+    this.path.fillColor = 'black';
+}
+
+/* End Food Class */
