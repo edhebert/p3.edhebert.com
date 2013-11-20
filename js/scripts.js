@@ -49,14 +49,20 @@ $(document).ready(function() {
     tool = new Tool();
 
     // initialize mouse Position
-    var foodPosition = new Point (-300, -300);
+    var foodPosition = new Point();
 
     // Set drawing loop
     view.onFrame = function(event) {
         fish.update();
         fish.checkBoundaries();
-        fish.seek(foodPosition); 
-        fish.eat();        
+
+        // if there's food, eat it. Otherwise, wander about.         
+        if (typeof(food) != "undefined"){
+            fish.seek(foodPosition);
+            fish.eat();
+        }
+        else
+            fish.wander();        
     }
 
 /*
@@ -113,8 +119,8 @@ function Fish() {
     
     // established the heading / direction of the fish
     var angle           = (Math.PI * 2);
-    // var wrapAngle       = (Math.PI / 2) + angle;
-    // var wanderTheta     = 0;
+    // how much the fish will wander about
+    var wanderTheta     = 0;
     
     var orientation     = 0;
     var lastOrientation = 0;
@@ -134,7 +140,7 @@ function Fish() {
     this.checkBoundaries = function() {
 
         // create offset of 'white space' beyond the window
-        var offset = 200;
+        var offset = 250;
 
         if (this.location.x < -offset) {
             this.location.x = view.size.width + offset;
@@ -165,10 +171,9 @@ function Fish() {
 
 
     this.eat = function() {
-        // if food exists, compare its location against location of mouth's point
-        if (typeof food != "undefined")
-            var hitResult = food.path.hitTest(mouth);
-            // console.log('mouth: ' + mouth +', ' + 'hitResult: ' + hitResult);
+        // detect food location against location of mouth's point
+        var hitResult = food.path.hitTest(mouth);
+        // console.log('mouth: ' + mouth +', ' + 'hitResult: ' + hitResult);
 
         // if fish mouth hits food, do stuff
         if (hitResult)
@@ -265,6 +270,27 @@ function Fish() {
     };  
 
 
+    this.wander = function() {
+        // draws a "wandering" target circle some distance ahead of the fish
+        var wanderR     = 40;
+        var wanderD     = 100;
+        var change      = 0.05;
+        
+        wanderTheta += Math.random() * (change * 2) - change;
+        
+        var circleLocation = this.velocity.clone();
+        circleLocation = circleLocation.normalize();
+        circleLocation.x *= wanderD;
+        circleLocation.y *= wanderD;
+        circleLocation.x += this.location.x;
+        circleLocation.y += this.location.y;
+        
+        var circleOffset = new Point( wanderR * Math.cos( wanderTheta ), wanderR * Math.sin( wanderTheta ) );
+        
+        var target = new Point( circleLocation.x + circleOffset.x, circleLocation.y + circleOffset.y );
+        
+        this.seek( target );
+    }
 }
 
 /* End Fish Class */
