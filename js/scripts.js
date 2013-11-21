@@ -4,20 +4,33 @@ Ed Hebert
 ehebert@fas.harvard.edu
 DWA15 - Project 3 - Javascript
 
-This project uses the Paper.js library to create a fish that
-steers naturally, responds to mouse events, etc.
+This project uses the Paper.js library to create a "fish" that
+steers itself naturally, and gets "fed" by mouse clicks.
 
-The concepts for this project are adapted from Chapter 6, "Autonomous Agents" from the book _The Nature of Code_, By Dan Shiffman. 
+The concepts for this project are adapted from the books 
+_The Nature of Code_, By Dan Shiffman, and
+_Foundation HTML animation with Javascript_,
+by Billy Lamberta and Keith Peters
 
-Also thanks to topics and sketches posted on OpenProcessing.org
-
+Also inspired by topics and sketches posted on OpenProcessing.org
 http://natureofcode.com
 http://paperjs.org
 http://openprocessing.org
+http://www.amazon.com/Foundation-HTML5-Animation-JavaScript-Lamberta/dp/1430236655
 
 */
 
 
+// the global fish creature
+var fish;
+
+// the food particle
+var food;
+
+// bool to track whether there's food on the screen
+var foodExists = false;
+
+// define the creature's tails' color and style
 var tailStyle = {
     strokeColor:    "#FFFFFF",
     strokeWidth:    2
@@ -26,16 +39,6 @@ var tailStyle = {
 var tailTipStyle = {
     fillColor:  "#CA2A65"
 };
-
-
-// the global fish creature
-var fish;
-
-// (eventually an) array to contain food particles
-var food;
-
-// bool to track whether there's food on the screen
-var foodExists = false;
 
 // Access paper.js directly through JavaScript rather than PaperScript
 paper.install(window);
@@ -59,43 +62,29 @@ $(document).ready(function() {
         fish.update();
         fish.checkBoundaries();
 
-        // if there's food, eat it. Otherwise, wander about.         
-        if (typeof(food) != "undefined")
-            console.log(foodExists);
-            if (foodExists)
-            {
-                fish.seek(foodPosition);
-                fish.eat();
-            }
-            else
-                fish.wander();     
+        if (foodExists)
+        {
+            fish.seek(foodPosition);
+            fish.eat();
+        }
+        else
+            fish.wander();     
     }
 
-/*
-    // creature follows mouse movements
-    tool.onMouseMove = function(event) {
-        foodPosition = new Point(event.point);    
-    }
-*/
 
     // Feed fish with a mouse click
     tool.onMouseDown = function(event) {
-
-        // remove the old food (for now)
-        if (typeof food != 'undefined')
+        // remove the old food
+        if (foodExists)
             food.path.remove();
 
-        // (temp) set foodPosition to the click location
+        // set foodPosition to the click location
         foodPosition = event.point;
 
-        // add a new food particle to the array
+        // add food particle to the canvas
         food = new Food(event.point);  
         foodExists = true;
-
-        // add the food particle to the array (eventually need to locate closest food)
-        // food.push(newFood);  
     }
-
 });
 
 
@@ -144,7 +133,6 @@ function Fish() {
 
      // wraps the fish object to the opposite side of the screen    
     this.checkBoundaries = function() {
-
         // create offset of 'white space' beyond the window
         var offset = 300;
 
@@ -279,8 +267,7 @@ function Fish() {
     };  
 
     // draws a "wandering" circle and target some distance ahead of the fish
-    this.wander = function() {
-        
+    this.wander = function() {      
         // radius of wander circle
         var wanderR     = 5;
 
@@ -299,8 +286,7 @@ function Fish() {
         circleLocation = circleLocation.multiply(wanderD);
         // make the circle relative to the fish's current location
         circleLocation = circleLocation.add(this.location);
-
-        
+      
         var circleOffset = new Point(wanderR * Math.cos( wanderTheta ), wanderR * Math.sin( wanderTheta));
         
         var target = new Point(circleLocation.x + circleOffset.x, circleLocation.y + circleOffset.y);
@@ -348,7 +334,8 @@ function Tail() {
     //this.path.opacity = 0.8;
     
     
-    // Use simple IK motion
+    // Use Inverse kinematic motion to create tail whip
+    // Ch. 14 - Foundation HTML animation w/ Javascript
     this.update = function(orientation) {
         this.path.segments[1].point = this.head.point;
         
@@ -373,8 +360,7 @@ function Tail() {
         pathTip.position.y = this.path.segments[numSegments-1].point.y;
 
         this.path.smooth();
-    };
-    
+    };    
 }
 
 /* End Tail Class */
