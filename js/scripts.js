@@ -19,7 +19,7 @@ http://openprocessing.org
 
 
 var tailStyle = {
-    strokeColor:    "#0033FF",
+    strokeColor:    "#FFFFFF",
     strokeWidth:    2
 };
 
@@ -108,7 +108,7 @@ function Fish() {
     var mouth;
 
     // the number and length of fish body 'spine' segments
-    var segmentLength = 5;
+    var segmentLength = 4;
     var numSegments = 20;
 
     // the vectors that will govern the fish's motion (load from off screen)
@@ -146,7 +146,7 @@ function Fish() {
     this.checkBoundaries = function() {
 
         // create offset of 'white space' beyond the window
-        var offset = 250;
+        var offset = 300;
 
         if (this.location.x < -offset) {
             this.location.x = view.size.width + offset;
@@ -196,9 +196,10 @@ function Fish() {
         this.path.add(new Point(60, 90));
 
         this.path.closed = true; 
-        this.path.fillColor = '#0033FF'; 
+        this.path.fillColor = '#FFFFFF'; 
         this.path.strokeWidth = 2;
-        this.path.strokeColor =  '#0033FF'; 
+        this.path.strokeColor =  '#FFFFFF'; 
+        // this.path.opacity = 0.8;
 
         // Create tails
         for ( var t = 0; t < numTails; t++ ) {
@@ -316,16 +317,14 @@ function Fish() {
 function Food(point) {
     // the path that draws the food
     this.path           = new Path.Circle(point, 10);
-    this.path.fillColor = 'green';
-    this.path.strokeColor = 'green';
+    this.path.fillColor = 'orange';
     this.path.sendToBack();
 }
 
 /* End Food Class */
 
 
-// -------------------------------------
-// ---- Tail Class BEGIN
+/* Begin Tail Class */
 
 function Tail() {
     this.head   = new Segment();
@@ -334,7 +333,7 @@ function Tail() {
     var numSegments         = 20;
     var segmentLength       = 20;
     
-    var pathTip             = new Path.Circle( new Point(0, 0), 5 );
+    var pathTip             = new Path.Circle( new Point(0, 0), 10 );
     pathTip.style           = tailTipStyle;
     //pathTip.opacity       = 0.7;
         
@@ -378,5 +377,4 @@ function Tail() {
     
 }
 
-// ---- Tail Class END
-// -------------------------------------
+/* End Tail Class */

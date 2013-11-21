@@ -1,12 +1,29 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!-- 
+            Ed Hebert 
+            ehebert@fas.harvard.edu
+            DWA15 Project 3 - Javascript
+            Created a "swimmer" in Paper.js that wanders on its own and "eats" mouse clicks!
+        -->
+        
         <title>Ed Hebert - Project Three: Autonomous Agent</title>
         <link rel="stylesheet" href="css/styles.css">
        
     </head>    
     <body>
-        <canvas id="myCanvas" data-paper-resize="true"></canvas>
+        <!-- canvas that displays all the Paper.js scripts -->
+        <canvas id="myCanvas" data-paper-resize="true"></canvas>    
+
+        <!-- video loop downloaded from https://www.youtube.com/watch?v=n3mZYEUpdzo
+             and converted to HTML video formats with Miro Video Converter -->              
+        <video autoplay loop preload poster="/a/screen/hcway-vid-fallback.jpg">
+            <source src="video/water-looping.mp4" type="video/mp4">
+            <source src="video/water-looping.webmhd.webm" type="video/webm">
+            <source src="video/water-looping.oggtheora.ogv" type="video/ogg">
+            <img src="video/water.jpg" alt="pool"/>
+        </video>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script type="text/javascript" src="js/paper-full.min.js"></script>     
         <script src="js/scripts.js" type="text/javascript"></script>

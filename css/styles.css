@@ -1,15 +1,35 @@
+/**
+ * Ed Hebert 
+ * ehebert@fas.harvard.edu
+ * DWA15 Project 3 - Javascript
+ */
+
 body {
     margin: 0px;
     border: 0px;
     padding: 0px;
-    background-color: #fff;
     overflow: hidden;
+    background-color: #83cee5;
 }
 
 
 canvas {
     margin: 0px;
     padding: 0px;
-    /* pointer-events: none; */
     position: absolute;
+    background-color: transparent;
+    z-index: 2; // above video!
+}
+
+/*ful screen video */
+video {
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    -webkit-transform: translate(-50%, -50%);     
+    -moz-transform: translate(-50%, -50%);         
+    z-index: 1; // behind canvas   
 }
