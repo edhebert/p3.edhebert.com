@@ -37,7 +37,7 @@ var tailStyle = {
 };
 
 var tailTipStyle = {
-    fillColor:  "#CA2A65"
+    fillColor:      "#CA2A65"
 };
 
 // Access paper.js directly through JavaScript rather than PaperScript
@@ -97,8 +97,8 @@ function Fish() {
     var mouth;
 
     // the number and length of fish body 'spine' segments
-    var segmentLength = 4;
-    var numSegments = 20;
+    var segmentLength   = 4;
+    var numSegments     = 20;
 
     // the vectors that will govern the fish's motion (load from off screen)
     this.location       = new Point(view.center);
@@ -122,8 +122,8 @@ function Fish() {
     var lastLocation;
         
     // number of streaming Tails
-    var numTails = 2;
-    var tails       = [numTails];
+    var numTails        = 2;
+    var tails           = [numTails];
     
     // apply various force vectors to fish acceleration
     this.applyForce = function(force) {
@@ -179,8 +179,15 @@ function Fish() {
     this.init = function() {
         // construct the fish shape
         mouth = this.path.add(new Point(30,0));
-        this.path.add(new Point(0,90));        
+
+        // create V-shaped back
+        this.path.add(new Point(0,90));  
+        this.path.segments[1].handleOut.x = 50;
+        this.path.segments[1].handleOut.y = -50;
+
         this.path.add(new Point(60, 90));
+        this.path.segments[2].handleIn.x = -50;
+        this.path.segments[2].handleIn.y = -50;        
 
         this.path.closed = true; 
         this.path.fillColor = '#FFFFFF'; 
@@ -192,9 +199,7 @@ function Fish() {
         for ( var t = 0; t < numTails; t++ ) {
             tails[t] = new Tail();
             tails[t].init();
-        }
-
-         
+        }         
     }
 
 
@@ -268,13 +273,14 @@ function Fish() {
     // draws a "wandering" circle and target some distance ahead of the fish
     this.wander = function() {      
         // radius of wander circle
-        var wanderR     = 5;
+        var wanderR         = 5;
 
         // distance of circle ahead of the fish
-        var wanderD     = 125;
+        var wanderD         = 125;
 
         // how much to randomize the target each loop
-        var change      = .25;       
+        var change          = .25;      
+
         wanderTheta += Math.random() * (change * 2) - change;
         
         // get the current velocity
@@ -301,8 +307,8 @@ function Fish() {
 
 function Food(point) {
     // the path that draws the food
-    this.path           = new Path.Circle(point, 10);
-    this.path.fillColor = 'orange';
+    this.path               = new Path.Circle(point, 10);
+    this.path.fillColor     = 'orange';
     this.path.sendToBack();
 }
 
