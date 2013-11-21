@@ -66,6 +66,7 @@ $(document).ready(function() {
         {
             fish.seek(foodPosition);
             fish.eat();
+            food.resize();
         }
         else
             fish.wander();     
@@ -76,7 +77,7 @@ $(document).ready(function() {
     tool.onMouseDown = function(event) {
         // remove the old food
         if (foodExists)
-            food.path.remove();
+           food.path.remove();
 
         // set foodPosition to the click location
         foodPosition = event.point;
@@ -166,11 +167,11 @@ function Fish() {
 
     this.eat = function() {
         // detect food location against location of mouth's point        
-        var hitResult = food.path.hitTest(mouth.point);
+        var hitResult =food.path.hitTest(mouth.point);
         // if fish mouth hits food, remove food
         if (hitResult)
         {
-            food.path.remove();
+           food.path.remove();
             foodExists = false;
         }
     }
@@ -307,9 +308,43 @@ function Fish() {
 
 function Food(point) {
     // the path that draws the food
-    this.path               = new Path.Circle(point, 10);
+
+    var grow = true;
+    var minSize = 2; 
+    var maxSize = 30;
+    var radius;
+    this.path               = new Shape.Circle(point, minSize);
     this.path.fillColor     = 'orange';
+    // this.path.opacity       = 0.6;
     this.path.sendToBack();
+
+    this.resize = function() {
+
+        radius = this.path.bounds.width / 2;
+        var newRadius;
+
+        if (radius > maxSize)
+            grow = false;
+        else if (radius < minSize)
+            grow = true;
+
+        // cycle the food color
+        this.path.fillColor.hue += 1;
+
+        if (grow){
+            newRadius = radius + 1;
+            // set new radius
+            this.path.scale(newRadius / radius);
+            radius = newRadius;
+        }            
+        else
+        {
+            newRadius = radius - 1;
+            // set new radius
+            this.path.scale(newRadius / radius);
+            radius = newRadius;           
+        }
+    }
 }
 
 /* End Food Class */
@@ -336,7 +371,6 @@ function Tail() {
         this.path.style     = tailStyle;
         this.head           = this.path.segments[0];
     };
-    //this.path.opacity = 0.8;
     
     
     // Use Inverse kinematic motion to create tail whip
