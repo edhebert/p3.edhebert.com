@@ -18,10 +18,11 @@ canvas {
     padding: 0px;
     position: absolute;
     background-color: transparent;
-    z-index: 2; // above video!
+    /* keep the canvas above video */
+    z-index: 2;
 }
 
-/*ful screen video */
+/*full screen video in the background of the HTML canvas*/
 video {
     position: absolute;
     min-width: 100%;
@@ -32,7 +33,8 @@ video {
     -webkit-transform: translate(-50%, -50%);     
     -moz-transform: translate(-50%, -50%);  
     -ms-transform: translate(-50%, -50%);        
-    z-index: 1; // behind canvas   
+    /* behind canvas */ 
+    z-index: 1;   
 }
 
 /* hide video from mobile devices */
