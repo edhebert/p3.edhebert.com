@@ -34,3 +34,10 @@ video {
     -ms-transform: translate(-50%, -50%);        
     z-index: 1; // behind canvas   
 }
+
+/* hide video from mobile devices */
+@media screen and (max-width: 1024px) {
+    video {
+        display: none; 
+    } 
+}

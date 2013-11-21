@@ -167,7 +167,6 @@ function Fish() {
     this.eat = function() {
         // detect food location against location of mouth's point        
         var hitResult = food.path.hitTest(mouth.point);
-
         // if fish mouth hits food, remove food
         if (hitResult)
         {
