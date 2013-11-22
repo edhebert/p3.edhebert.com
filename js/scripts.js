@@ -9,7 +9,7 @@ steers itself naturally, and gets "fed" by mouse clicks.
 
 The concepts for this project are adapted from the books 
 _The Nature of Code_, By Dan Shiffman, and
-_Foundation HTML animation with Javascript_,
+_Foundation HTML Animation with Javascript_,
 by Billy Lamberta and Keith Peters
 
 Also inspired by topics and sketches posted on OpenProcessing.org
