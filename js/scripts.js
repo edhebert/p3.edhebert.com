@@ -24,6 +24,12 @@ http://www.amazon.com/Foundation-HTML5-Animation-JavaScript-Lamberta/dp/14302366
 // the global fish creature
 var fish;
 
+// the maximum desired speed of the fish   
+var maxSpeed        = 10; 
+
+// the magnitude of its steering ability
+var maxForce        = 0.2;
+
 // the food particle
 var food;
 
@@ -101,6 +107,9 @@ $(document).ready(function() {
                     tails[i].path.visible = false;
                 hasTails = false;
                 $('#tails').html('Add Kitefish Tails');
+                // make fish more quick and manueverable
+                maxSpeed = 13;
+                maxForce = 0.5;
             }
             else
             {
@@ -109,6 +118,9 @@ $(document).ready(function() {
                     tails[i].path.visible = true;   
                 hasTails = true;
                 $('#tails').html('Remove Kitefish Tails');
+                // make fish less quick and manueverable
+                maxSpeed = 10;
+                maxForce = 0.2;                
             }
     });
 });
@@ -130,12 +142,6 @@ function Fish() {
     this.location       = new Point(view.center);
     this.velocity       = new Point(0, 0);
     this.acceleration   = new Point(0, 0);
-
-    // the maximum desired speed of the fish   
-    var maxSpeed        = 10; 
-
-    // the magnitude of its steering ability
-    var maxForce        = .2;
     
     // establishes the heading / direction of the fish
     var angle           = (Math.PI * 2);
@@ -237,7 +243,7 @@ function Fish() {
         desired = desired.normalize();
 
         // teach the fish to slow down to arrive at object
-        if (distance < 500) 
+        if (distance < 300) 
             // set speed based on the proximity to the target
             desired = desired.multiply(maxSpeed * (distance / 200));
         else
