@@ -30,6 +30,11 @@ var food;
 // bool to track whether there's food on the screen
 var foodExists = false;
 
+// number of streaming Tails
+var numTails        = 2;
+var tails           = [numTails];
+var hasTails        = true;
+
 // define the creature's tails' color and style
 var tailStyle = {
     strokeColor:    "#FFFFFF",
@@ -86,6 +91,26 @@ $(document).ready(function() {
         food = new Food(event.point);  
         foodExists = true;
     }
+
+    // add or remove 'fish tails' via button click
+    $('#tails').click(function() {
+            // toggle tails on or off
+            if (hasTails){
+                // toggle both tails invisible
+                for (var i = 0; i < numTails; i++)
+                    tails[i].path.visible = false;
+                hasTails = false;
+                $('#tails').html('Add Kitefish Tails');
+            }
+            else
+            {
+                // toggle visible
+                for (var i = 0; i < numTails; i++)
+                    tails[i].path.visible = true;   
+                hasTails = true;
+                $('#tails').html('Remove Kitefish Tails');
+            }
+    });
 });
 
 
@@ -121,10 +146,7 @@ function Fish() {
     var orientation     = 0;
     var lastOrientation = 0;
     var lastLocation;
-        
-    // number of streaming Tails
-    var numTails        = 2;
-    var tails           = [numTails];
+
     
     // apply various force vectors to fish acceleration
     this.applyForce = function(force) {
@@ -361,7 +383,6 @@ function Tail() {
     
     var pathTip             = new Path.Circle( new Point(0, 0), 10 );
     pathTip.style           = tailTipStyle;
-    //pathTip.opacity       = 0.7;
         
     
     this.init = function() {
@@ -397,6 +418,12 @@ function Tail() {
         
         pathTip.position.x = this.path.segments[numSegments-1].point.x;
         pathTip.position.y = this.path.segments[numSegments-1].point.y;
+
+        // toggle path tips on or off 
+        if (hasTails)
+            pathTip.visible = true;
+        else
+            pathTip.visible = false;
 
         this.path.smooth();
     };    

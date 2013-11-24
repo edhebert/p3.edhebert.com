@@ -21,6 +21,14 @@ header {
     text-align: right;
 }
 
+#buttons {
+    z-index: 4;
+    position: absolute;
+    right: 75px;
+    top: 25px;
+    text-align: right;
+}
+
 h1 {
   font-family: "league-gothic",sans-serif;
   text-transform: uppercase;
