@@ -112,7 +112,7 @@ function Fish() {
     // the magnitude of its steering ability
     var maxForce        = .2;
     
-    // established the heading / direction of the fish
+    // establishes the heading / direction of the fish
     var angle           = (Math.PI * 2);
 
     // how much the fish will wander about
@@ -374,17 +374,17 @@ function Tail() {
     
     
     // Use Inverse kinematic motion to create tail whip
-    // Ch. 14 - Foundation HTML animation w/ Javascript
+    // Technique covered in Ch. 14 - Foundation HTML animation w/ Javascript
     this.update = function(orientation) {
         this.path.segments[1].point = this.head.point;
         
         var dx      = this.head.point.x - this.path.segments[1].point.x;
         var dy      = this.head.point.y - this.path.segments[1].point.y;
-        var angle   = Math.atan2( dy, dx ) + (orientation * (Math.PI / 180));
+        var angle   = Math.atan2(dy, dx) + (orientation * (Math.PI / 180));
         angle += Math.PI / 2;
         
-        this.path.segments[1].point.x += Math.cos( angle );
-        this.path.segments[1].point.y += Math.sin( angle );
+        this.path.segments[1].point.x += Math.cos(angle);
+        this.path.segments[1].point.y += Math.sin(angle);
         
         for ( var i = 2; i < numSegments; i++ ) {
             var pt = new Point( (this.path.segments[i].point.x - this.path.segments[i-2].point.x), (this.path.segments[i].point.y - this.path.segments[i-2].point.y) );
