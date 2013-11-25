@@ -29,6 +29,30 @@ header {
     text-align: right;
 }
 
+button, button:visited {
+    border: none;
+    background: #f0b248;
+    -webkit-border-radius: 28;
+    -moz-border-radius: 28;
+    border-radius: 28px;
+    font-family: "rooney-web",sans-serif;
+    font-weight:300;
+    color: #fff;
+    font-size: 20px;
+    padding: 10px 20px 10px 20px;
+    text-decoration: none;
+}
+
+button:hover, button:active {
+    background: #fcbc3c;
+    text-decoration: none;
+}
+
+button:focus {
+    outline: none;
+}
+
+
 h1 {
   font-family: "league-gothic",sans-serif;
   text-transform: uppercase;
