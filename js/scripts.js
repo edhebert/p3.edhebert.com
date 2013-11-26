@@ -30,11 +30,20 @@ var maxSpeed        = 10;
 // the magnitude of its steering ability
 var maxForce        = 0.2;
 
+// the default scale of the fish
+var fishScale = 1.0;
+
 // the food particle
 var food;
 
 // bool to track whether there's food on the screen
 var foodExists = false;
+
+// the fish's purging
+var purging;
+
+// whether the food is purged
+var purged = false;
 
 // number of streaming Tails
 var numTails        = 2;
@@ -81,6 +90,16 @@ $(document).ready(function() {
         }
         else
             fish.wander();     
+
+        // poop fish when necessary!
+        if (Math.abs(fish.path.area) > 3000)
+            $('#poop').show();
+        else
+            $('#poop').hide();
+
+        // decay any purgings
+        if (purged)
+            purging.decay();
     }
 
 
@@ -108,8 +127,8 @@ $(document).ready(function() {
                 hasTails = false;
                 $('#tails').html('Add Kitefish Tails');
                 // make fish more quick and manueverable
-                maxSpeed = 13;
-                maxForce = 0.5;
+                maxSpeed += 3;
+                maxForce += 0.2;
             }
             else
             {
@@ -119,10 +138,33 @@ $(document).ready(function() {
                 hasTails = true;
                 $('#tails').html('Remove Kitefish Tails');
                 // make fish less quick and manueverable
-                maxSpeed = 10;
-                maxForce = 0.2;                
+                maxSpeed -= 3;
+                maxForce -= 0.2;                
             }
     });
+
+    // poop the fish!
+    $('#poop').click(function(){
+
+        // purge the fish
+        purging = new Poop(fish.path.position);
+        purged = true;
+
+        fish.scaleAbsolute(1.0);
+
+        // set max speed based on whether tails currently exist
+        if (hasTails)
+        {
+            maxSpeed = 10;
+            maxForce = 0.2;
+        }
+        else
+        {
+            maxSpeed = 13;
+            maxForce = 0.5;
+        }
+    });
+
 });
 
 
@@ -133,10 +175,6 @@ function Fish() {
     this.path           = new Path();
     this.head           = new Segment();
     var mouth;
-
-    // the number and length of fish body 'spine' segments
-    var segmentLength   = 4;
-    var numSegments     = 20;
 
     // the vectors that will govern the fish's motion (load from off screen)
     this.location       = new Point(view.center);
@@ -163,7 +201,10 @@ function Fish() {
      // wraps the fish object to the opposite side of the screen    
     this.checkBoundaries = function() {
         // create offset of 'white space' beyond the window
-        var offset = 300;
+        if (hasTails)
+            var offset = 300;
+        else
+            var offset = 50;
 
         if (this.location.x < -offset) {
             this.location.x = view.size.width + offset;
@@ -204,8 +245,10 @@ function Fish() {
         {
            food.path.remove();
             foodExists = false;
+            this.scaleAbsolute(fishScale * 1.1);
+            maxSpeed -= 0.3;
+            maxForce -= 0.01;
         }
-
     }
 
 
@@ -232,7 +275,14 @@ function Fish() {
         for ( var t = 0; t < numTails; t++ ) {
             tails[t] = new Tail();
             tails[t].init();
-        }         
+        }       
+    }
+
+
+    // create a function to absolutely scale the fish (vs. relatively)
+    this.scaleAbsolute = function(absScale) {
+        this.path.scale(absScale / fishScale);
+        fishScale = absScale;
     }
 
 
@@ -300,7 +350,7 @@ function Fish() {
             tails[t].update(orientation);
             // point 0 is 'mouth', no tail there [t+1]
             tails[t].head.point = this.path.segments[t+1].point;
-        }
+        } 
     };  
 
     // draws a "wandering" circle and target some distance ahead of the fish
@@ -347,7 +397,6 @@ function Food(point) {
     var radius;
     this.path               = new Shape.Circle(point, minSize);
     this.path.fillColor     = 'orange';
-    // this.path.opacity       = 0.6;
     this.path.sendToBack();
 
     this.resize = function() {
@@ -380,6 +429,45 @@ function Food(point) {
 }
 
 /* End Food Class */
+
+
+/* Begin Poop Class */
+
+function Poop(point) {
+
+    purged = true;
+
+    // base the 'poop' size on the scale of the fish itself
+    var radius = fishScale * 20;
+
+    // draw it
+    this.path               = new Shape.Circle(point, radius);
+    this.path.fillColor     = 'brown';
+    this.path.sendToBack();
+
+    this.decay = function() {
+        radius = this.path.bounds.width / 2;
+        var newRadius;
+        newRadius = radius + 5;
+        
+        // set new radius
+        this.path.scale(newRadius / radius);
+        radius = newRadius;    
+
+        // make less opaque
+        this.path.opacity -= .01;    
+
+        if (this.path.opacity <= 0)
+        {
+            // remove the poop
+            this.path.remove();
+            purged = false;   
+        }
+                
+    }
+}
+
+/* End poop class */
 
 
 /* Begin Tail Class */
