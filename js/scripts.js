@@ -455,7 +455,7 @@ function Poop(point) {
         radius = newRadius;    
 
         // make less opaque
-        this.path.opacity -= .01;    
+        this.path.opacity -= .006;    
 
         if (this.path.opacity <= 0)
         {
