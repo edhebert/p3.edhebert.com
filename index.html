@@ -5,13 +5,14 @@
             Ed Hebert 
             ehebert@fas.harvard.edu
             DWA15 Project 3 - Javascript
-            Created a "swimmer" in Paper.js that wanders on its own and "eats" mouse clicks!
+            Created a creature using Javascript and the canvas element.
+            This 'kitefish' wanders on its own, eats mouse clicks, grows, and even poops!
         -->
         <meta charset="UTF-8">
         <title>Kitefishing - Ed Hebert, DWA15 Project Three</title>
         <link rel="stylesheet" href="css/styles.css">
         
-        <!-- Typekit fonts embed (needed in head tag) -->
+        <!-- Typekit fonts embed (these need to be loaded in head tag to function properly) -->
         <script type="text/javascript" src="//use.typekit.net/mmh0znz.js"></script>
         <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
        
@@ -21,10 +22,12 @@
             <h1>Kitefishing</h1>
             <h2>Feed the kitefish your mouse clicks.</h2>
         </header>
+        
         <div id="buttons">
             <button id='poop'>Poop the Kitefish</button>
             <button id='tails'>Remove Kitefish Tails</button>
         </div>
+
         <!-- canvas that displays all the Paper.js scripts -->
         <canvas id="myCanvas" data-paper-resize="true"></canvas>    
 
@@ -36,9 +39,13 @@
             <source src="video/water-looping.oggtheora.ogv" type="video/ogg">
             <img src="video/water.jpg" alt="pool"/>
         </video>
+
+        <!-- Javascript used in the site functionality -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <!-- Paper.js javascript vector library -->
         <script type="text/javascript" src="js/paper-full.min.js"></script>     
         <script src="js/scripts.js" type="text/javascript"></script>
+
         <!-- GA Tracking -->
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

@@ -5,14 +5,16 @@ ehebert@fas.harvard.edu
 DWA15 - Project 3 - Javascript
 
 This project uses the Paper.js library to create a "fish" that
-steers itself naturally, and gets "fed" by mouse clicks.
+steers itself naturally, gets "fed" by mouse clicks, grows when it eats,
+and "poops" to return to its original size.
 
 The concepts for this project are adapted from the books 
-_The Nature of Code_, By Dan Shiffman, and
+_The Nature of Code_, By Daniel Shiffman, and
 _Foundation HTML Animation with Javascript_,
 by Billy Lamberta and Keith Peters
 
 Also inspired by topics and sketches posted on OpenProcessing.org
+
 http://natureofcode.com
 http://paperjs.org
 http://openprocessing.org
@@ -39,7 +41,7 @@ var food;
 // bool to track whether there's food on the screen
 var foodExists = false;
 
-// the fish's purging
+// the fish's umm..."purging" matter
 var purging;
 
 // whether the food is purged
